@@ -26,7 +26,9 @@ files.forEach((file) => {
 
   output += "---\n";
   output += `File: "${file}"\n\n`;
+  output += `\`\`\`\n`;
   output += `${content}\n`;
+  output += `\`\`\`\n`;
   output += "---\n\n";
 });
 
