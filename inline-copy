@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+
+const fs = require("fs");
+const path = require("path");
+const { spawn } = require("child_process");
+
+const files = process.argv.slice(2);
+
+if (files.length === 0) {
+  console.error("Please provide at least one file.");
+  process.exit(1);
+}
+
+let output = "###\n\n";
+
+files.forEach((file) => {
+  const filePath = path.resolve(process.cwd(), file);
+  let content;
+
+  try {
+    content = fs.readFileSync(filePath, "utf8");
+  } catch (err) {
+    console.error(`Error reading file "${file}": ${err.message}`);
+    process.exit(1);
+  }
+
+  output += "---\n";
+  output += `File: "${file}"\n\n`;
+  output += `${content}\n`;
+  output += "---\n\n";
+});
+
+output += "###\n";
+
+console.log(output);
+
+// Copy output to clipboard using 'pbcopy' command
+const pbcopy = spawn("pbcopy");
+pbcopy.stdin.write(output);
+pbcopy.stdin.end();
