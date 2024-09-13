@@ -141,9 +141,7 @@ The script outputs formatted content to the console and copies it to your clipbo
 ---
 File: "file-n"
 
-```
 <file-contents>
-```
 ---
 
 ###
@@ -169,9 +167,7 @@ inline-copy "example.txt"
 ---
 File: "example.txt"
 
-```
 <contents of example.txt>
-```
 ---
 
 ###
@@ -197,33 +193,25 @@ inline-copy "*.js" "src/**/*.css" "README.md"
 ---
 File: "app.js"
 
-```
 <contents of app.js>
-```
 ---
 
 ---
 File: "utils/helper.js"
 
-```
 <contents of utils/helper.js>
-```
 ---
 
 ---
 File: "src/styles/main.css"
 
-```
 <contents of src/styles/main.css>
-```
 ---
 
 ---
 File: "README.md"
 
-```
 <contents of README.md>
-```
 ---
 
 ###
