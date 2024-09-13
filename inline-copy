@@ -4,10 +4,38 @@ const fs = require("fs");
 const path = require("path");
 const { spawn } = require("child_process");
 
-const files = process.argv.slice(2);
+// Try to require the 'glob' package
+let glob;
+try {
+  // Attempt to load locally installed module
+  glob = require("glob");
+} catch (error) {
+  console.error(
+    "The 'glob' package is required but not installed. Install it locally with 'npm install' once in your ~/scripts/inline-copy folder."
+  );
+  process.exit(1);
+}
+
+const patterns = process.argv.slice(2);
+
+if (patterns.length === 0) {
+  console.error("Please provide at least one file pattern.");
+  process.exit(1);
+}
+
+let files = [];
+
+patterns.forEach((pattern) => {
+  const matches = glob.sync(pattern, { nodir: true });
+  if (matches.length === 0) {
+    console.error(`No files matched pattern "${pattern}".`);
+  } else {
+    files = files.concat(matches);
+  }
+});
 
 if (files.length === 0) {
-  console.error("Please provide at least one file.");
+  console.error("No files to process.");
   process.exit(1);
 }
 
@@ -26,9 +54,9 @@ files.forEach((file) => {
 
   output += "---\n";
   output += `File: "${file}"\n\n`;
-  output += `\`\`\`\n`;
+  output += "```\n";
   output += `${content}\n`;
-  output += `\`\`\`\n`;
+  output += "```\n";
   output += "---\n\n";
 });
 

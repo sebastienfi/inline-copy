@@ -1,7 +1,6 @@
 # inline-copy
 
-A simple Node.js command-line tool for macOS that reads the contents of one or more files, formats them, outputs the result to the console, and automatically copies it to your clipboard.
-This is useful when you want to copy the content of multiple files to a single location, like a LLM chat message.
+A simple Node.js command-line tool for macOS that reads the contents of one or more files (supports glob patterns), formats them, outputs the result to the console, and automatically copies it to your clipboard. This is useful when you want to copy the content of multiple files to a single location, like an LLM chat message.
 
 ## Table of Contents
 
@@ -11,6 +10,7 @@ This is useful when you want to copy the content of multiple files to a single l
   - [Installation](#installation)
     - [Prerequisites](#prerequisites)
     - [Clone the Repository](#clone-the-repository)
+    - [Install Dependencies](#install-dependencies)
     - [Make the Script Executable](#make-the-script-executable)
     - [Add the Script to Your PATH](#add-the-script-to-your-path)
       - [Option 1: Create a Symlink in `/usr/local/bin`](#option-1-create-a-symlink-in-usrlocalbin)
@@ -20,14 +20,17 @@ This is useful when you want to copy the content of multiple files to a single l
     - [Output Format](#output-format)
   - [Examples](#examples)
     - [Example 1: Single File](#example-1-single-file)
-    - [Example 2: Multiple Files](#example-2-multiple-files)
+    - [Example 2: Multiple Files with Glob Patterns](#example-2-multiple-files-with-glob-patterns)
   - [Notes](#notes)
   - [License](#license)
-- [Additional Information](#additional-information)
+  - [Additional Information](#additional-information)
+  - [Example Usage](#example-usage)
+  - [Need Help?](#need-help)
 
 ## Features
 
-- **Read Multiple Files**: Include one or more files in a single command.
+- **Read Multiple Files**: Include one or more files or glob patterns in a single command.
+- **Glob Pattern Support**: Use glob patterns to specify files.
 - **Formatted Output**: Outputs file contents with clear separators and file names.
 - **Clipboard Integration**: Automatically copies the formatted output to your clipboard.
 - **Console Output**: Displays the formatted content in your terminal.
@@ -50,24 +53,25 @@ This is useful when you want to copy the content of multiple files to a single l
 
 ### Clone the Repository
 
-1. **Create a Directory for Your Scripts (Optional)**:
+Clone this repository to your scripts directory:
 
-   ```bash
-   mkdir -p ~/scripts
-   ```
+```bash
+git clone https://github.com/sebastienfi/inline-copy.git ~/scripts/inline-copy
+```
 
-2. **Save the Script**:
+### Install Dependencies
 
-   Clone this repository to your scripts directory:
+Navigate to the project directory and install the required modules:
 
-   ```bash
-   git clone https://github.com/sebastienfi/inline-copy.git ~/scripts/inline-copy
-   ```
+```bash
+cd ~/scripts/inline-copy
+npm install
+```
 
 ### Make the Script Executable
 
 ```bash
-chmod +x ~/scripts/inline-copy/inline-copy
+chmod +x inline-copy
 ```
 
 ### Add the Script to Your PATH
@@ -115,16 +119,17 @@ sudo ln -s ~/scripts/inline-copy/inline-copy /usr/local/bin/inline-copy
      ```bash
      source ~/.zshrc
      ```
+
 ## Usage
 
 ### Syntax
 
 ```bash
-inline-copy "<file-1>" "<file-2>" "<file-3>" ...
+inline-copy "<file-pattern-1>" "<file-pattern-2>" "<file-pattern-3>" ...
 ```
 
-- Replace `<file-n>` with the relative or absolute paths to the files you want to include.
-- Enclose file paths with spaces in quotes.
+- Replace `<file-pattern-n>` with the relative or absolute file paths or glob patterns.
+- Enclose patterns with spaces in quotes.
 
 ### Output Format
 
@@ -136,7 +141,9 @@ The script outputs formatted content to the console and copies it to your clipbo
 ---
 File: "file-n"
 
+```
 <file-contents>
+```
 ---
 
 ###
@@ -144,6 +151,7 @@ File: "file-n"
 
 - Each file's content is enclosed between `---` separators.
 - The entire output is enclosed between `###` separators.
+- File contents are wrapped in code blocks using triple backticks for better readability.
 
 ## Examples
 
@@ -161,17 +169,25 @@ inline-copy "example.txt"
 ---
 File: "example.txt"
 
+```
 <contents of example.txt>
+```
 ---
 
 ###
 ```
 
-### Example 2: Multiple Files
+### Example 2: Multiple Files with Glob Patterns
 
 ```bash
-inline-copy "script.js" "styles.css" "index.html"
+inline-copy "*.js" "src/**/*.css" "README.md"
 ```
+
+**Explanation:**
+
+- `*.js`: All `.js` files in the current directory.
+- `src/**/*.css`: All `.css` files in any subdirectory of `src`.
+- `README.md`: Includes the `README.md` file.
 
 **Output:**
 
@@ -179,21 +195,35 @@ inline-copy "script.js" "styles.css" "index.html"
 ###
 
 ---
-File: "script.js"
+File: "app.js"
 
-<contents of script.js>
+```
+<contents of app.js>
+```
 ---
 
 ---
-File: "styles.css"
+File: "utils/helper.js"
 
-<contents of styles.css>
+```
+<contents of utils/helper.js>
+```
 ---
 
 ---
-File: "index.html"
+File: "src/styles/main.css"
 
-<contents of index.html>
+```
+<contents of src/styles/main.css>
+```
+---
+
+---
+File: "README.md"
+
+```
+<contents of README.md>
+```
 ---
 
 ###
@@ -201,10 +231,11 @@ File: "index.html"
 
 ## Notes
 
+- **Glob Patterns**: The script supports glob patterns for flexible file selection.
 - **Clipboard Copy**: The script uses the `pbcopy` command, which is available by default on macOS, to copy the output to the clipboard.
-- **Error Handling**: If a file is not found or cannot be read, the script will display an error message and exit.
+- **Error Handling**: If a pattern matches no files, the script will display an error message but continue processing other patterns.
 - **Relative Paths**: The script resolves file paths relative to the current working directory.
-- **No External Dependencies**: The script uses only built-in Node.js modules.
+- **Dependencies**: The script uses the `glob` module for pattern matching.
 
 ## License
 
@@ -214,7 +245,7 @@ This project is licensed under the MIT License.
 
 Feel free to customize the script or reach out if you have any questions!
 
-# Additional Information
+## Additional Information
 
 **Updating the Script:**
 
@@ -225,3 +256,30 @@ cd ~/scripts/inline-copy
 git pull
 ```
 
+---
+
+## Example Usage
+
+- **Include all JavaScript files in the current directory:**
+
+  ```bash
+  inline-copy "*.js"
+  ```
+
+- **Include all Markdown files in `docs` directory:**
+
+  ```bash
+  inline-copy "docs/**/*.md"
+  ```
+
+- **Include specific files:**
+
+  ```bash
+  inline-copy "inline-copy" "README.md"
+  ```
+
+---
+
+## Need Help?
+
+Feel free to open an issue on the repository or reach out if you have any questions!
